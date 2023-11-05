@@ -102,20 +102,25 @@ export const changePassword = catchAsyncError(async (req, res, next) => {
 })
 
 export const updateProfile = catchAsyncError(async (req, res, next) => {
-    const {name, email} = req.body
-
-    const user = await User.findById(req.user._id).select("+password")
-
-    if(name) user.name = name
-    if(email) user.email = email
-
-    await user.save()
-
+    const user = await User.findById(req.user._id);
+  
+    const { name, email } = req.body;
+  
+    if (name) {
+      user.name = name;
+    }
+  
+    if (email) {
+      user.email = email;
+    }
+  
+    await user.save();
+  
     res.status(200).json({
-            success: true,
-            message: "Profile Updated successfully"
-    })
-})
+      success: true,
+      message: "Profile Updated Successfully",
+    });
+  });
 
 export const updateprofilepicture = catchAsyncError(async(req, res, next) => {
     const file = req.file
@@ -195,95 +200,97 @@ export const resetPassword = catchAsyncError(async(req, res, next) => {
     })
 })
 
-export const addToPlaylist = catchAsyncError(async(req, res, next) => {
-    const user = await User.findById(req.user._id)
-
-    const course = await Course.findById(req.body.id)
-
-    if(!course) return next(new ErrorHandler('Invalid Course Id', 404))
-
+export const addToPlaylist = catchAsyncError(async (req, res, next) => {
+    const user = await User.findById(req.user._id);
+  
+    const course = await Course.findById(req.body.id);
+  
+    if (!course) return next(new ErrorHandler("Course not found", 404));
+  
     const itemExist = user.playlist.find((item) => {
-        if(item.course.toString()===course._id.toString()) return true
-    })
-
-    if(itemExist) return next(new ErrorHandler("Item Already Exist", 409))
-
+      if (item.course.toString() === course._id.toString()) return true;
+    });
+  
+    if (itemExist) return next(new ErrorHandler("Course Already Exist", 404));
+  
     user.playlist.push({
-        course: course._id,
-        poster: course.poster.url,
-    })
-    await user.save()
-
+      course: course._id,
+      poster: course.poster.url,
+    });
+  
+    await user.save();
+  
     res.status(200).json({
-        success:true,
-        message:"Added to playlist",
-    })
-})
+      success: true,
+      message: "Course added to playlist Successfully",
+    });
+  });
 
-export const removeFromPlaylist = catchAsyncError(async(req, res, next) => {
-    const user = await User.findById(req.user._id)
-
-    const course = await Course.findById(req.query.id)
-
-    if(!course) return next(new ErrorHandler('Invalid Course Id', 404))
-
-    const newPlaylist = user.playlist.filter(item=>{
-        if(item.course.toString()!==course._id.toString()) return item
-    })
-
-    user.playlist = newPlaylist
-   
-    await user.save()
-
+export const removeFromPlaylist = catchAsyncError(async (req, res, next) => {
+    const user = await User.findById(req.user._id);
+  
+    const course = await Course.findById(req.query.id);
+  
+    if (!course) return next(new ErrorHandler("Course Not Found", 404));
+  
+    const newPlaylist = user.playlist.filter((item) => {
+      if (item.course.toString() !== course._id.toString()) return item;
+    });
+  
+    user.playlist = newPlaylist;
+  
+    await user.save();
+  
     res.status(200).json({
-        success:true,
-        message:"Remove from playlist",
-    })
-})
+      success: true,
+      message: "Course Removed From Playlist",
+    });
+  });
 
 
 //admin Controller
-export const getAllUsers = catchAsyncError(async(req, res, next) => {
-    const users = await User.find({})
-
+export const getAllUsers = catchAsyncError(async (req, res, next) => {
+    const users = await User.find();
+  
     res.status(200).json({
-        success:true,
-        users,
-    })
-})
+      success: true,
+      users,
+    });
+  });
 
-export const updateUserRole = catchAsyncError(async(req, res, next) => {
-    const user = await User.findById(req.params.id)
-
-    if(!user) return next(new ErrorHandler('User not found', 404))
-
-    if(user.role === 'user') user.role='admin'
-    else user.role = 'user'
-
-    await user.save()
-
+export const updateUserRole = catchAsyncError(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+  
+    if (!user) return next(new ErrorHandler("User Not Found", 404));
+  
+    // console.log(user);
+  
+    if (user.role === "admin") user.role = "user";
+    else user.role = "admin";
+  
+    await user.save();
+  
     res.status(200).json({
-        success:true,
-        message:'Role Updated'
-    })
-})
+      success: true,
+      message: "Role Changed Successfully",
+    });
+  });
 
-export const deleteUser = catchAsyncError(async(req, res, next) => {
-    const user = await User.findById(req.params.id)
-
-    if(!user) return next(new ErrorHandler('User not found', 404))
-
-    await cloudinary.v2.uploader.destroy(user.avatar.public_id)
-
-    //cancel Subscripttion
-
-    await user.remove()
-
+export const deleteUser = catchAsyncError(async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+  
+    if (!user) return next(new ErrorHandler("User Not Found", 404));
+  
+    // profile pic bhi cploudinary de selete karna hai
+    await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+  
+    await user.deleteOne();
+  
     res.status(200).json({
-        success:true,
-        message:'User Deleted Successfully'
-    })
-})
+      success: true,
+      message: "User Deleted Successfully",
+    });
+  });
 
 export const deleteMyProfile = catchAsyncError(async(req, res, next) => {
     const user = await User.findById(req.user._id)
@@ -302,14 +309,15 @@ export const deleteMyProfile = catchAsyncError(async(req, res, next) => {
     })
 })
 
-User.watch().on("change", async ()=>{
-    const stats = await Stats.find({}).sort({createAt:"desc"}).limit(1)
-
-    const subscription = await User.find({"subscription.status": "active"})
-
-    stats[0].users = await User.countDocuments()
-    stats[0].subscription = subscription.length
-    stats[0].createdAt = new Date(Date.now())
-
-    await stats[0].save()
-})
+// yaha ek watcher create karenge ... ye real time data check karenga ki jaise hi update ho wo function call ho jayenga
+User.watch().on("change", async () => {
+    const stats = await Stats.find({}).sort({ createdAt: "desc" }).limit(1);
+  
+    const subscription = await User.find({ "subscription.status": "active" });
+  
+    stats[0].users = await User.countDocuments();
+    stats[0].subscriptions = subscription.length;
+    stats[0].createdAt = new Date(Date.now());
+  
+    await stats[0].save();
+  });

@@ -1,6 +1,6 @@
 // import mongoose, { Mongoose } from 'mongoose'
 import mongoose from 'mongoose'
-import validator from 'validator'
+// import validator from 'validator'
 
 const schema = new mongoose.Schema({
     title: {

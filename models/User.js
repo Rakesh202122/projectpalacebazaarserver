@@ -20,6 +20,10 @@ const schema = new mongoose.Schema({
         required:[true, 'Please Enter Your Email'],
         minLength: [6, 'Password must be at least 6 characters long'],
         select: false,
+        // match: [
+        //     /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/,
+        //     "Password must have one special and UpperCase charecter",
+        //   ],
     },
     role: {
         type: String,

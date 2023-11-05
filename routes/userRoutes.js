@@ -6,28 +6,28 @@ import singleUpload from '../middlewares/multer.js';
 const router = express.Router();
 
 //to register a new user
-router.route('/register').post(singleUpload, register)
+router.route('/register').post(singleUpload, register) //
 
 //login
-router.route('/login').post(login)
+router.route('/login').post(login) //
 
 //logout
-router.route('/logout').get(logout)
+router.route('/logout').get(isAuthenticated, logout) //
 
 //get my profile
-router.route('/me').get(isAuthenticated, getMyProfile)
+router.route('/me').get(isAuthenticated, getMyProfile) //
 
 //delete my profile
 router.route('/me').delete(isAuthenticated, deleteMyProfile)
 
 //change password
-router.route('/changepassword').put(isAuthenticated, changePassword)
+router.route('/changepassword').put(isAuthenticated, changePassword) //
 
 //update prof
-router.route('/updateprofile').put(isAuthenticated, updateProfile)
+router.route('/updateprofile').put(isAuthenticated, updateProfile) //
 
 //update prof pic
-router.route('/updateprofilepicture').put(singleUpload, isAuthenticated, updateprofilepicture)
+router.route('/updateprofilepicture').put(singleUpload, isAuthenticated, updateprofilepicture) //
 
 //forget pass
 router.route('/forgetpassword').post(forgetPassword)
@@ -36,16 +36,16 @@ router.route('/forgetpassword').post(forgetPassword)
 router.route('/resetpassword/:token').put(resetPassword)
 
 //add to playlist
-router.route('/addtoplaylist').post(isAuthenticated, addToPlaylist)
+router.route('/addtoplaylist').post(isAuthenticated, addToPlaylist) //
 
 //remove from playlist
-router.route('/removefromplaylist').delete(isAuthenticated, removeFromPlaylist)
+router.route('/removefromplaylist').delete(isAuthenticated, removeFromPlaylist) //
 
 //Admin Routes
-router.route('/admin/users').get(isAuthenticated, authorizeAdmin, getAllUsers)
+router.route('/admin/users').get(isAuthenticated, authorizeAdmin, getAllUsers) //
 
 router.route('/admin/user/:id')
-.put(isAuthenticated, authorizeAdmin, updateUserRole)
-.delete(isAuthenticated, authorizeAdmin, deleteUser)
+.put(isAuthenticated, authorizeAdmin, updateUserRole) //
+.delete(isAuthenticated, authorizeAdmin, deleteUser) //
 
 export default router

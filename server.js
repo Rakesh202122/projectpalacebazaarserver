@@ -13,11 +13,14 @@ cloudinary.v2.config({
     api_secret: process.env.CLOUDINARY_CLIENT_SECRET
 })
 
+// payments
 export const instance = new RazorPay({
     key_id: process.env.RAZORPAY_API_KEY,
     key_secret: process.env.RAZORPAY_API_SECRET,
   });
 
+// nodecors
+// this starts denotres seconds minutes hours days months years
 nodeCron.schedule("0 0 0 1 * *", async()=>{
     try {
         await Stats.create({})
@@ -27,5 +30,5 @@ nodeCron.schedule("0 0 0 1 * *", async()=>{
 })
 
 app.listen(process.env.PORT,()=> {
-    console.log(`Server is working on port: ${process.env.PORT}`)
+    console.log(`Server is running on port: ${process.env.PORT}`)
 })
