@@ -28,9 +28,9 @@ export const getAllCourses = catchAsyncError(async (req, res, next)=> {
 
 
 export const createCourse = catchAsyncError(async (req, res, next) => {
-    const { title, description, category, createdBy } = req.body;
+    const { title,location, description, category, createdBy, postBy, mobileNo } = req.body;
   
-    if (!title || !description || !category || !createdBy)
+    if (!title || !location || !description || !category || !createdBy || !postBy || !mobileNo)
       return next(new ErrorHandler("please enter all the fields", 404));
   
     const file = req.file;
@@ -41,9 +41,12 @@ export const createCourse = catchAsyncError(async (req, res, next) => {
   
     await Course.create({
       title,
+      location,
       description,
       category,
       createdBy,
+      postBy,
+      mobileNo,
       poster: {
         public_id: mycloud.public_id,
         url: mycloud.secure_url,
@@ -52,14 +55,14 @@ export const createCourse = catchAsyncError(async (req, res, next) => {
   
     res.status(201).json({
       success: true,
-      message: "Course Created Successfully. You Can Add Lectures Now.",
+      message: "Job Created Successfully For Smart Labour Chowk.",
     });
   });
 
 export const getCourseLectures = catchAsyncError(async (req, res, next) => {
     const course = await Course.findById(req.params.id)
     
-    if (!course) return next(new ErrorHandler("Course not found", 404))
+    if (!course) return next(new ErrorHandler("Job not found", 404))
     
     course.views += 1
     
@@ -112,7 +115,7 @@ export const addLecture = catchAsyncError(async (req, res, next) => {
 export const deleteCourse = catchAsyncError(async (req, res, next) => {
     const course = await Course.findById(req.params.id);
   
-    if (!course) return next(new ErrorHandler("Course Not Found", 404));
+    if (!course) return next(new ErrorHandler("Job Not Found", 404));
   
     // course ka poster cloudinary se delete karne ke liye
     await cloudinary.v2.uploader.destroy(course.poster.public_id);
@@ -129,7 +132,7 @@ export const deleteCourse = catchAsyncError(async (req, res, next) => {
   
     res.status(200).json({
       success: true,
-      message: "Course Deleted Successfully",
+      message: "Job Deleted Successfully",
     });
   });
 
