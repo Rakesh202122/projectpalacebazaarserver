@@ -10,19 +10,15 @@ import getDataUri from '../utils/dataUri.js'
 import { Stats } from '../models/Stats.js'
 
 export const register = catchAsyncError(async(req, res, next) => {
-    const {name, email, mobileNo, password} = req.body
+    const {name, email, password} = req.body
     const file = req.file
 
-    if (!name || !email || !mobileNo || !password || !file)
+    if (!name || !email || !password || !file)
         return next(new ErrorHandler('Please Enter all field', 400))
 
     let user = await User.findOne({email})
 
     if(user) return next(new ErrorHandler('User Already Exist', 409))
-
-    let userNo = await User.findOne({mobileNo})
-
-    if(userNo) return next(new ErrorHandler('User Already Exist', 409))
 
     //upload file on cloudnary
 
@@ -33,7 +29,6 @@ export const register = catchAsyncError(async(req, res, next) => {
     user = await User.create({
         name, 
         email, 
-        mobileNo,
         password, 
         avatar:{
             public_id:mycloud.public_id,

@@ -15,11 +15,6 @@ const schema = new mongoose.Schema({
         unique: true,
         validate:validator.isEmail,
     },
-    mobileNo: {
-        type: Number,
-        required:[true, 'Please Enter Your Mobile Number'],
-        unique: true,
-    },
     password: {
         type: String,
         required:[true, 'Please Enter Your Email'],

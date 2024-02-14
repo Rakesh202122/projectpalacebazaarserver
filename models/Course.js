@@ -9,24 +9,6 @@ const schema = new mongoose.Schema({
         minLength:[4, 'Title must be at least 4 characters'],
         maxLength:[80, 'Title cannot exced 80 characters']
     },
-    location: {
-        type: String,
-        required:[true, 'Please Enter Your Location'],
-        minLength:[4, 'Location must be at least 4 characters'],
-        maxLength:[80, 'Location cannot exced 80 characters']
-    },
-    postBy: {
-        type: String,
-        required:[true, 'Please Enter Your Name'],
-        minLength:[4, 'Name must be at least 4 characters'],
-        maxLength:[80, 'Name cannot exced 80 characters']
-    },
-    mobileNo: {
-        type: Number,
-        required:[true, 'Please Enter Your Mobile Number'],
-        minLength:[10, 'Mobile Number cannot exced 10 characters'],
-        maxLength:[10, 'Mobile Number cannot exced 10 characters']
-    },
     description: {
         type: String,
         required:[true, 'Please Enter Your Description'],
